@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.fabricmc.example.mixin",
+  "package": "net.fractalpixel.redtech.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],

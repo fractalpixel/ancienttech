@@ -1,32 +1,39 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "redtech",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "RedTech",
+  "description": "A Minecraft Fabric mod that provides streamlined redstone conduits and gates.",
   "authors": [
-    "Me!"
+    "fractalpixel"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/fractalpixel/redtech",
+    "sources": "https://github.com/fractalpixel/redtech"
   },
 
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "license": "LGPL-3.0",
+  "icon": "assets/redtech/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+	    {
+        "adapter": "kotlin",
+        "value": "net.fractalpixel.redtech.RedTechMod"
+      }
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "redtech.mixins.json"
   ],
 
+  "requires": {
+    "fabric-language-kotlin": ">=1.3.30"
+  },
   "depends": {
+    "fabric-language-kotlin": ">=1.3.30",
     "fabricloader": ">=0.4.0",
     "fabric": "*"
   },
