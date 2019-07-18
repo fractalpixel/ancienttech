@@ -1,6 +1,6 @@
 # RedTech Mod
 
-RedTech is a mod for Minecraft/Fabric that aims to provide some redstone components to make constructing redstone machinery more space efficient and easy.
+RedTech is a mod for Minecraft/Fabric that aims to provide some redstone components to make constructing redstone machinery more space-efficient and easy.
 
 ## Depends on
 
@@ -14,7 +14,7 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 
 ## Usage
 
-TODO
+*TODO*
 
 ## To be done
 
@@ -27,7 +27,7 @@ LGPL 3.0
 ## Frequently asked Questions
 
 #### Can I include this mod in my custom mod pack?
-Yes
+Yes.
 
 #### Can I fork this mod?
 Yes, but please name it something else, and if possible include a link to the original mod in the description.
