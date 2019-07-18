@@ -1,12 +1,13 @@
 {
   "variants": {
-    "": { "model": "redtech:block/redstone_pipe" },
     "facing=south,powered=false": { "model": "redtech:block/redstone_pipe" },
     "facing=west,powered=false": { "model": "redtech:block/redstone_pipe", "y": 90 },
     "facing=north,powered=false": { "model": "redtech:block/redstone_pipe", "y": 180},
     "facing=east,powered=false": { "model": "redtech:block/redstone_pipe", "y": 270 },
-    "facing=up,powered=false": { "model": "redtech:block/redstone_pipe", "x": 90},
-    "facing=down,powered=false": { "model": "redtech:block/redstone_pipe", "x": 270 }
+    "facing=south,powered=true": { "model": "redtech:block/redstone_pipe" },
+    "facing=west,powered=true": { "model": "redtech:block/redstone_pipe", "y": 90 },
+    "facing=north,powered=true": { "model": "redtech:block/redstone_pipe", "y": 180},
+    "facing=east,powered=true": { "model": "redtech:block/redstone_pipe", "y": 270 }
   }
 }
 
