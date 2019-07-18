@@ -2,7 +2,6 @@ package net.fractalpixel.redtech
 
 import net.minecraft.block.*
 import net.minecraft.entity.EntityContext
-import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.sound.SoundEvents
@@ -118,7 +117,7 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         val shouldPower = calculateOutput(world, blockPos, blockState)
         if (wasPowered != shouldPower) {
             // Schedule an update tick
-            world.blockTickScheduler.schedule(blockPos, this, updateDelayTicks, TaskPriority.HIGH)
+            scheduleUpdateTick(world, blockPos)
         }
     }
 
@@ -135,16 +134,21 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
     }
 
     override fun onScheduledTick(blockState: BlockState, world: World, blockPos: BlockPos, random: Random) {
-        updatePoweredStatus(blockState, world, blockPos)
-    }
-
-    private fun updatePoweredStatus(blockState: BlockState, world: World, blockPos: BlockPos) {
         val wasPowered = blockState.get(POWERED)
         val shouldPower = calculateOutput(world, blockPos, blockState)
         if (wasPowered != shouldPower) {
             //val updateFlag = 2  // Notify clients, but not neighbours?
             world.setBlockState(blockPos, blockState.with(POWERED, shouldPower))
+        } else if (!wasPowered) {
+            // A short on-tick requested (e.g. from observer block)
+            world.setBlockState(blockPos, blockState.with(POWERED, true))
+            if (!shouldPower) scheduleUpdateTick(world, blockPos)
         }
+
+    }
+
+    private fun scheduleUpdateTick(world: World, blockPos: BlockPos) {
+        world.blockTickScheduler.schedule(blockPos, this, updateDelayTicks, TaskPriority.HIGH)
     }
 
 
