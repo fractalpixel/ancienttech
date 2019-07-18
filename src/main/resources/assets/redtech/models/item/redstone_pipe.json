@@ -1,4 +1,6 @@
 {
-  "parent": "redtech:block/redstone_pipe"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "redtech:item/redstone_pipe"
+  }
 }
-

@@ -1,13 +1,190 @@
 {
-  "variants": {
-    "facing=south,powered=false": { "model": "redtech:block/redstone_pipe" },
-    "facing=west,powered=false": { "model": "redtech:block/redstone_pipe", "y": 90 },
-    "facing=north,powered=false": { "model": "redtech:block/redstone_pipe", "y": 180},
-    "facing=east,powered=false": { "model": "redtech:block/redstone_pipe", "y": 270 },
-    "facing=south,powered=true": { "model": "redtech:block/redstone_pipe" },
-    "facing=west,powered=true": { "model": "redtech:block/redstone_pipe", "y": 90 },
-    "facing=north,powered=true": { "model": "redtech:block/redstone_pipe", "y": 180},
-    "facing=east,powered=true": { "model": "redtech:block/redstone_pipe", "y": 270 }
-  }
-}
+  "multipart": [
 
+    {   "when": { "input_north": "true"},
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 180}
+    },
+    {   "when": { "input_south": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 0}
+    },
+    {   "when": { "input_west": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 90}
+    },
+    {   "when": { "input_east": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 270}
+    },
+    {   "when": { "input_up": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "x": 90}
+    },
+    {   "when": { "input_down": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "x": 270}
+    },
+
+
+
+
+    {   "when": { "facing": "north", "require_all":  "false", "invert_output":  "false", "powered": "true"},
+      "apply": { "model": "redtech:block/redstone_pipe_or_on", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "false", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_on", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "false", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_on", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "false", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_on", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "false", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_on", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "false", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_on", "x": 270}
+    },
+
+    {   "when": { "facing": "north", "require_all":  "false", "invert_output":  "false", "powered": "false"},
+      "apply": { "model": "redtech:block/redstone_pipe_or_off", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "false", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_off", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "false", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_off", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "false", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_off", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "false", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_off", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "false", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_or_off", "x": 270}
+    },
+
+
+
+
+    {   "when": { "facing": "north", "require_all":  "true", "invert_output":  "false", "powered": "true"},
+      "apply": { "model": "redtech:block/redstone_pipe_and_on", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "true", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_on", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "true", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_on", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "true", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_on", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "true", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_on", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "true", "invert_output":  "false", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_on", "x": 270}
+    },
+
+    {   "when": { "facing": "north", "require_all":  "true", "invert_output":  "false", "powered": "false"},
+      "apply": { "model": "redtech:block/redstone_pipe_and_off", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "true", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_off", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "true", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_off", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "true", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_off", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "true", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_off", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "true", "invert_output":  "false", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_and_off", "x": 270}
+    },
+
+
+
+
+
+    {   "when": { "facing": "north", "require_all":  "false", "invert_output":  "true", "powered": "true"},
+      "apply": { "model": "redtech:block/redstone_pipe_nand_on", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "false", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_on", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "false", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_on", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "false", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_on", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "false", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_on", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "false", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_on", "x": 270}
+    },
+
+    {   "when": { "facing": "north", "require_all":  "false", "invert_output":  "true", "powered": "false"},
+      "apply": { "model": "redtech:block/redstone_pipe_nand_off", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "false", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_off", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "false", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_off", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "false", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_off", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "false", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_off", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "false", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nand_off", "x": 270}
+    },
+
+
+
+
+    {   "when": { "facing": "north", "require_all":  "true", "invert_output":  "true", "powered": "true"},
+      "apply": { "model": "redtech:block/redstone_pipe_nor_on", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "true", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_on", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "true", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_on", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "true", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_on", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "true", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_on", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "true", "invert_output":  "true", "powered": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_on", "x": 270}
+    },
+
+    {   "when": { "facing": "north", "require_all":  "true", "invert_output":  "true", "powered": "false"},
+      "apply": { "model": "redtech:block/redstone_pipe_nor_off", "y": 180}
+    },
+    {   "when": { "facing": "south", "require_all":  "true", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_off", "y": 0}
+    },
+    {   "when": { "facing": "west", "require_all":  "true", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_off", "y": 90}
+    },
+    {   "when": { "facing": "east", "require_all":  "true", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_off", "y": 270}
+    },
+    {   "when": { "facing": "up", "require_all":  "true", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_off", "x": 90}
+    },
+    {   "when": { "facing": "down", "require_all":  "true", "invert_output":  "true", "powered": "false" },
+      "apply": { "model": "redtech:block/redstone_pipe_nor_off", "x": 270}
+    }
+
+
+  ]
+}
