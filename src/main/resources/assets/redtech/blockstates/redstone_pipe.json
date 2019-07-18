@@ -2,22 +2,22 @@
   "multipart": [
 
     {   "when": { "input_north": "true"},
-      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 180}
-    },
-    {   "when": { "input_south": "true" },
       "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 0}
     },
-    {   "when": { "input_west": "true" },
-      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 90}
+    {   "when": { "input_south": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 180}
     },
-    {   "when": { "input_east": "true" },
+    {   "when": { "input_west": "true" },
       "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 270}
     },
+    {   "when": { "input_east": "true" },
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "y": 90}
+    },
     {   "when": { "input_up": "true" },
-      "apply": { "model": "redtech:block/redstone_pipe_incoming", "x": 90}
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "x": 270}
     },
     {   "when": { "input_down": "true" },
-      "apply": { "model": "redtech:block/redstone_pipe_incoming", "x": 270}
+      "apply": { "model": "redtech:block/redstone_pipe_incoming", "x": 90}
     },
 
 
