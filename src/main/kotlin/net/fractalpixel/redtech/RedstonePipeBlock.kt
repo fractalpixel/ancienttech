@@ -3,13 +3,17 @@ package net.fractalpixel.redtech
 import modPositive
 import net.minecraft.block.*
 import net.minecraft.entity.EntityContext
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
+import net.minecraft.item.ItemStack
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.BooleanProperty
 import net.minecraft.state.property.EnumProperty
 import net.minecraft.state.property.Properties
+import net.minecraft.util.BlockMirror
+import net.minecraft.util.BlockRotation
 import net.minecraft.util.Hand
 import net.minecraft.util.TaskPriority
 import net.minecraft.util.hit.BlockHitResult
@@ -22,7 +26,7 @@ import net.minecraft.world.World
 import java.util.*
 
 
-class RedstonePipeBlock(settings: Settings): Block(settings) {
+class RedstonePipeBlock(settings: Settings): FacingBlock(settings) {
 
     /**
      * Setting this to higher than 1 results in messed pulses if it is driven by something with fast pulses.
@@ -63,7 +67,7 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
 
 
     override fun getPlacementState(itemPlacementContext: ItemPlacementContext): BlockState {
-        var state = defaultState
+        val state = defaultState
                 .with(POWERED, false)
                 .with(FACING, itemPlacementContext.side)
                 .with(GATE, RedTechGate.OR)
@@ -75,11 +79,45 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
                 .with(INPUT_NORTH, false)
                 .with(INPUT_SOUTH, false)
 
-        state = updateNeighborConnections(itemPlacementContext.world, itemPlacementContext.blockPos, state)
+        return calculateDynamicState(itemPlacementContext.world, itemPlacementContext.blockPos, state)
+    }
 
-        state = state.with(POWERED, calculateOutput(itemPlacementContext.world, itemPlacementContext.blockPos, state))
+    private fun calculateDynamicState(world: World, blockPos: BlockPos, state: BlockState): BlockState {
+        var updatedState = state
+        updatedState = updateNeighborConnections(world, blockPos, updatedState)
+        updatedState = updatedState.with(POWERED, calculateOutput(world, blockPos, updatedState))
+        return updatedState
+    }
 
-        return state
+    override fun onPlaced(world: World?, blockPos: BlockPos?, blockState: BlockState?, livingEntity_1: LivingEntity?, itemStack_1: ItemStack?) {
+        if (world != null && blockPos != null && blockState != null) {
+            val updatedState = calculateDynamicState(world, blockPos, blockState)
+            if (updatedState.get(POWERED) != blockState.get(POWERED)) {
+                // Schedule update tick if necessary
+                world.blockTickScheduler.schedule(blockPos, this, 1)
+            }
+        }
+    }
+
+    override fun onBlockAdded(blockState: BlockState, world: World, blockPos: BlockPos, blockState_2: BlockState?, boolean_1: Boolean) {
+        // Copied from AbstractRedstoneGate - no idea what this is supposed to do
+        this.updateTarget(world, blockPos, blockState)
+    }
+
+    override fun onBlockRemoved(blockState: BlockState, world: World, blockPos: BlockPos, blockState_2: BlockState, boolean_1: Boolean) {
+        // Copied from AbstractRedstoneGate - no idea what this is supposed to do
+        if (!boolean_1 && blockState.block !== blockState_2.block) {
+            super.onBlockRemoved(blockState, world, blockPos, blockState_2, boolean_1)
+            this.updateTarget(world, blockPos, blockState)
+        }
+    }
+
+    private fun updateTarget(world: World, blockPos: BlockPos, blockState: BlockState) {
+        // Copied from AbstractRedstoneGate - no idea what this is supposed to do
+        val direction = blockState.get(FACING)
+        val neighborPos = blockPos.offset(direction.opposite)
+        world.updateNeighbor(neighborPos, this, blockPos)
+        world.updateNeighborsExcept(neighborPos, this, direction)
     }
 
     override fun neighborUpdate(blockState: BlockState, world: World, blockPos: BlockPos, block: Block, blockPos2: BlockPos, boolean_1: Boolean) {
@@ -150,6 +188,14 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
             // Schedule an update tick
             scheduleUpdateTick(world, blockPos)
         }
+    }
+
+    override fun rotate(blockState: BlockState, blockRotation: BlockRotation): BlockState {
+        return blockState.with(FACING, blockRotation.rotate(blockState.get(FACING)))
+    }
+
+    override fun mirror(blockState: BlockState, blockMirror: BlockMirror): BlockState {
+        return blockState.with(FACING, blockMirror.apply(blockState.get(FACING)))
     }
 
     override fun getStrongRedstonePower(blockState: BlockState, blockView: BlockView, blockPos: BlockPos, direction: Direction): Int {
@@ -296,7 +342,6 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         val INPUT_DOWN: BooleanProperty = BooleanProperty.of("input_down")
 
         val POWERED = Properties.POWERED
-        val FACING = Properties.FACING
 
         val GATE: EnumProperty<RedTechGate> = EnumProperty.of("gate", RedTechGate::class.java)
         val INVERT_OUTPUT: BooleanProperty = BooleanProperty.of("invert_output")

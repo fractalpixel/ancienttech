@@ -26,7 +26,7 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
         * TWO is true if two or more inputs are on
     * [x] Update texture with new gates, build models    
     * [x] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks.
-    * [ ] Implement rotate, mirror - update facing, refresh inputs.
+    * [x] Implement rotate, mirror - update facing, refresh inputs.
     * [ ] Rename from redstone_pipe to redstone_gate or similar 
 * [ ] Redstone Pipe
     * plain, OR:s incoming, if no incoming connections, read block opposite output
