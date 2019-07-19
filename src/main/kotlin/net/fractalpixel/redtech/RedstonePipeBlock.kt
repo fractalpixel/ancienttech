@@ -216,11 +216,14 @@ class RedstonePipeBlock(settings: Settings): FacingBlock(settings) {
         if (wasPowered != shouldPower) {
             //val updateFlag = 2  // Notify clients, but not neighbours?
             world.setBlockState(blockPos, blockState.with(POWERED, shouldPower))
-        } else if (!wasPowered) {
+        }
+        /*
+        else if (!wasPowered) {
             // A short on-tick requested (e.g. from observer block)
             world.setBlockState(blockPos, blockState.with(POWERED, true))
             if (!shouldPower) scheduleUpdateTick(world, blockPos)
         }
+        */
 
     }
 
