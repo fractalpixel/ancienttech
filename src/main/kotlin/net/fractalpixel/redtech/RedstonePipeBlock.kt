@@ -24,6 +24,10 @@ import java.util.*
 
 class RedstonePipeBlock(settings: Settings): Block(settings) {
 
+    /**
+     * Setting this to higher than 1 results in messed pulses if it is driven by something with fast pulses.
+     * It will still try to detect fast off-on-off pulses and create slower pulses from them.
+     */
     val updateDelayTicks = 1
 
     override fun getOutlineShape(blockState: BlockState, blockView: BlockView, blockPos: BlockPos, entityContext: EntityContext): VoxelShape {
@@ -82,7 +86,7 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         val state = updateNeighborConnections(world, blockPos, blockState)
         world.setBlockState(blockPos, state)
 
-        // Just check if we should schedule an update, do not update directly, as that way lies infinite loops?
+        // Just check if we should schedule an update, do not update directly, as that way lies infinite loops
         checkForUpdateNeed(state, world, blockPos)
     }
 
@@ -108,22 +112,22 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
 
             var state = blockState
 
-            // Detect if we hit the front or back part
+            // Detect if player touched the front or back part
             val x = blockHitResult.pos.x.modPositive(1.0) * 2 - 1
             val y = blockHitResult.pos.y.modPositive(1.0) * 2 - 1
             val z = blockHitResult.pos.z.modPositive(1.0) * 2 - 1
             val facing = blockState.get(FACING)
             val part = facing.offsetX * x + facing.offsetY * y + facing.offsetZ * z
-            var updated = false // Keep a small gap between front and back part?
+            var updated = false
             if (part < -0.7) {
                 // We hit the front part, switch output negation
                 state = state.with(INVERT_OUTPUT, !state.get(INVERT_OUTPUT))
                 playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_BREAK, 1.0F, 1.0F);
                 updated = true
-            } else if (part > -0.65) {
+            } else if (part > -0.65) { // Keep a small gap between front and back part - improves the UI?
                 // We hit the back part, switch gate
                 state = nextGateState(state)
-                playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_PLACE, 1.0F, 1.0F);
+                playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_STEP, 1.0F, 1.0F);
                 updated = true
             }
 
@@ -218,14 +222,14 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         return result
     }
 
-    private fun calculateOutput(viewableWorld: ViewableWorld, blockPos: BlockPos, blockState: BlockState): Boolean {
+    private fun calculateOutput(world: World, blockPos: BlockPos, blockState: BlockState): Boolean {
         // Determine number of input gates, and number of them that have active redstone signals coming in
         var numInputs = 0
         var activeInputs = 0
         for (direction in Direction.values()) {
             if (blockState.get(inputProperty(direction))) {
                 numInputs++
-                if (neighbourCurrentlyEmitsRedstone(viewableWorld, blockPos, direction)) activeInputs++
+                if (neighbourCurrentlyEmitsRedstone(world, blockPos, direction)) activeInputs++
             }
         }
 
@@ -241,28 +245,26 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         val blockState = viewableWorld.getBlockState(neighborPos)
         val block = blockState.block
 
-        return if (block is RedstonePipeBlock) blockState.get(FACING) == direction
-               else if (block is AbstractRedstoneGateBlock) blockState.get(AbstractRedstoneGateBlock.FACING) == direction
-               else if (block is ObserverBlock) blockState.get(ObserverBlock.FACING) == direction
-               else blockState.emitsRedstonePower()
+        return when (block) {
+            is RedstonePipeBlock -> blockState.get(FACING) == direction
+            is AbstractRedstoneGateBlock -> blockState.get(AbstractRedstoneGateBlock.FACING) == direction
+            is ObserverBlock -> blockState.get(ObserverBlock.FACING) == direction
+            else -> blockState.emitsRedstonePower()
+        }
     }
 
-    private fun neighbourCurrentlyEmitsRedstone(viewableWorld: ViewableWorld, blockPos: BlockPos, direction: Direction): Boolean {
+    private fun neighbourCurrentlyEmitsRedstone(world: World, blockPos: BlockPos, direction: Direction): Boolean {
         val neighborPos = blockPos.offset(direction)
-        val blockState = viewableWorld.getBlockState(neighborPos)
-        return if (blockState.emitsRedstonePower()) {
-            val block= blockState.block
-            if (block === Blocks.REDSTONE_BLOCK) {
-                true
-            } else {
-                if (block === Blocks.REDSTONE_WIRE) {
-                    blockState.get(RedstoneWireBlock.POWER) > 0
-                } else {
-                    viewableWorld.getEmittedStrongRedstonePower(neighborPos, direction) > 0
-                }
-            }
+        val blockState = world.getBlockState(neighborPos)
+        val block= blockState.block
+        return if (block === Blocks.REDSTONE_BLOCK) {
+            true
         } else {
-            false
+            if (block === Blocks.REDSTONE_WIRE) {
+                blockState.get(RedstoneWireBlock.POWER) > 0
+            } else {
+                world.getEmittedRedstonePower(neighborPos, direction) > 0
+            }
         }
     }
 

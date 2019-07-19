@@ -8,6 +8,7 @@ import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.sound.BlockSoundGroup
+import net.minecraft.tag.Tag
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
@@ -26,6 +27,7 @@ class RedTechMod(): ModInitializer {
         val REDSTONE_PIPE = RedstonePipeBlock(FabricBlockSettings
                 .of(Material.BAMBOO)
                 .sounds(BlockSoundGroup.BAMBOO)
+                .strength(1f, 1f)
                 .build())
 
         val REDSTONE_PIPE_ITEM = BlockItem(REDSTONE_PIPE, Item.Settings()
