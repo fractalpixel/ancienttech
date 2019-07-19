@@ -20,8 +20,12 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 
 * [x] Redstone Gate
     * [ ] Tune texture (shadows)
-    * [ ] Do not make redstone rotate?
-    * [ ] Space for more gates?
+    * [ ] Do not make redstone rotate
+    * [ ] Turn front redstone separately (invert output, redstone 45 deg), and turn base for selecting gate
+        * Support gates: OR, TWO, AND, XOR (and their negations)
+        * XOR outputs 1 if odd number of active inputs (useful for toggling things with multiple switches)
+        * TWO is true if two or more inputs are on
+    * [ ] Update texture with new gates, build models    
     * [ ] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks.
     * [ ] Implement rotate, mirror - update facing, refresh inputs. 
 * [ ] Redstone Pipe
@@ -29,12 +33,9 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 * [ ] Branch
     * Like pipe, but add one additional output in the direction player watching when placing block (or up if facing straight forward)
 * [ ] Timer?
-* [ ] XOR-like gate
-    * output 1 if off number of active inputs (for toggling things with multiple switches)
-    * Could the basic gate include this?
-* [ ] (Always on/off-gate)
-    * Ignores inputs.  Dubious value.          
 * [ ] Recipes
+* [ ] Config file
+* [ ] Add in-game book that sometimes is available as loot / drops from libraries? - explains recipes and usage
 * [ ] Document
 * [ ] Release
 

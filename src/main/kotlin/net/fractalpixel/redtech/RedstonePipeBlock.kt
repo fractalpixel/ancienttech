@@ -103,6 +103,12 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
             if (!mainHandContent.isEmpty && mainHandContent.name == RedTechMod.REDSTONE_PIPE_ITEM.name) return false
             */
 
+            // TODO: Detect if we hit the front or back part
+            /*
+            println("activate")
+            println(blockHitResult.pos)
+            */
+
             // Switch state
             var state = nextGateState(blockState)
             state = state.with(POWERED, calculateOutput(world, blockPos, state))
