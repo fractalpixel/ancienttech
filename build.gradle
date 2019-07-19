@@ -44,7 +44,7 @@ dependencies {
 	// Kotlin support
 	modCompile(group: "net.fabricmc", name: "fabric-language-kotlin", version: "1.3.30-SNAPSHOT")
 	compileOnly(group: "net.fabricmc", name: "fabric-language-kotlin", version: "1.3.30-SNAPSHOT")
-	
+
 }
 
 processResources {

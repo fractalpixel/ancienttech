@@ -19,15 +19,15 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 ## To be done
 
 * [x] Redstone Gate
-    * [ ] Tune texture (shadows)
-    * [ ] Do not make redstone rotate
-    * [ ] Turn front redstone separately (invert output, redstone 45 deg), and turn base for selecting gate
+    * [x] Tune texture (shadows)
+    * [x] Turn front redstone separately (invert output, redstone 45 deg), and turn base for selecting gate
         * Support gates: OR, TWO, AND, XOR (and their negations)
         * XOR outputs 1 if odd number of active inputs (useful for toggling things with multiple switches)
         * TWO is true if two or more inputs are on
-    * [ ] Update texture with new gates, build models    
-    * [ ] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks.
-    * [ ] Implement rotate, mirror - update facing, refresh inputs. 
+    * [x] Update texture with new gates, build models    
+    * [x] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks.
+    * [ ] Implement rotate, mirror - update facing, refresh inputs.
+    * [ ] Read state of block with switch, door, etc 
 * [ ] Redstone Pipe
     * plain, OR:s incoming, if no incoming connections, read block opposite output
 * [ ] Branch

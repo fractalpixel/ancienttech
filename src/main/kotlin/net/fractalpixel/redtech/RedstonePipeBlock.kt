@@ -1,5 +1,6 @@
 package net.fractalpixel.redtech
 
+import modPositive
 import net.minecraft.block.*
 import net.minecraft.entity.EntityContext
 import net.minecraft.entity.player.PlayerEntity
@@ -7,6 +8,7 @@ import net.minecraft.item.ItemPlacementContext
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.BooleanProperty
+import net.minecraft.state.property.EnumProperty
 import net.minecraft.state.property.Properties
 import net.minecraft.util.Hand
 import net.minecraft.util.TaskPriority
@@ -40,7 +42,7 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         builder.add(
                 POWERED,
                 FACING,
-                REQUIRE_ALL,
+                GATE,
                 INVERT_OUTPUT,
                 INPUT_UP,
                 INPUT_DOWN,
@@ -60,7 +62,7 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         var state = defaultState
                 .with(POWERED, false)
                 .with(FACING, itemPlacementContext.side)
-                .with(REQUIRE_ALL, false)
+                .with(GATE, RedTechGate.OR)
                 .with(INVERT_OUTPUT, false)
                 .with(INPUT_DOWN, false)
                 .with(INPUT_UP, false)
@@ -97,24 +99,43 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         return if (!playerEntity.abilities.allowModifyWorld) {
             false
         } else {
+
             /*
             // Do not switch state if holding a pipe (makes it easier to place a lot of pipes)
             val mainHandContent = playerEntity.getEquippedStack(EquipmentSlot.MAINHAND)
             if (!mainHandContent.isEmpty && mainHandContent.name == RedTechMod.REDSTONE_PIPE_ITEM.name) return false
             */
 
-            // TODO: Detect if we hit the front or back part
-            /*
-            println("activate")
-            println(blockHitResult.pos)
-            */
+            var state = blockState
 
-            // Switch state
-            var state = nextGateState(blockState)
-            state = state.with(POWERED, calculateOutput(world, blockPos, state))
-            world.setBlockState(blockPos, state)
-            playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_PLACE, 1.0F, 1.0F);
-            true
+            // Detect if we hit the front or back part
+            val x = blockHitResult.pos.x.modPositive(1.0) * 2 - 1
+            val y = blockHitResult.pos.y.modPositive(1.0) * 2 - 1
+            val z = blockHitResult.pos.z.modPositive(1.0) * 2 - 1
+            val facing = blockState.get(FACING)
+            val part = facing.offsetX * x + facing.offsetY * y + facing.offsetZ * z
+            var updated = false // Keep a small gap between front and back part?
+            if (part < -0.7) {
+                // We hit the front part, switch output negation
+                state = state.with(INVERT_OUTPUT, !state.get(INVERT_OUTPUT))
+                playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_BREAK, 1.0F, 1.0F);
+                updated = true
+            } else if (part > -0.65) {
+                // We hit the back part, switch gate
+                state = nextGateState(state)
+                playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_PLACE, 1.0F, 1.0F);
+                updated = true
+            }
+
+            if (updated) {
+                // Update output powered state
+                state = state.with(POWERED, calculateOutput(world, blockPos, state))
+
+                // Update state for block
+                world.setBlockState(blockPos, state)
+            }
+
+            updated
         }
     }
 
@@ -162,21 +183,23 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
      * Toggle to next logic gate in sequence
      */
     private fun nextGateState(blockState: BlockState): BlockState {
-        var reqAll = blockState.get(REQUIRE_ALL)
-        var invertOut = blockState.get(INVERT_OUTPUT)
-
-        reqAll = !reqAll
-        if (!reqAll) invertOut = !invertOut
-
-        return blockState.with(INVERT_OUTPUT, invertOut).with(REQUIRE_ALL, reqAll)
+        // Find index of existing gate, and increase to next, rolling over if past size
+        val currentGate = blockState.get(GATE)
+        val gateValues = RedTechGate.values()
+        val nextIndex = (gateValues.indexOf(currentGate) + 1) % gateValues.size
+        val nextGate = gateValues[nextIndex]
+        return blockState.with(GATE, nextGate)
     }
 
     /**
      * Determine the directions that there should be input pipes from
      */
     private fun updateNeighborConnections(viewableWorld: ViewableWorld, blockPos: BlockPos, blockState: BlockState): BlockState {
+
+        // Check each direction, if it outputs a redstone signal in this direction, add input pipe from there
         val facing = blockState.get(FACING)
         var result = blockState
+        var inputsFound = false
         for (direction in Direction.values()) {
             val inputProperty = inputProperty(direction)
             val hasInput = blockState.get(inputProperty)
@@ -184,11 +207,19 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
             if (hasInput != shouldInput) {
                 result = result.with(inputProperty, shouldInput)
             }
+            if (shouldInput) inputsFound = true
         }
+
+        // If no inputs found, create one opposite of the output
+        if (!inputsFound) {
+            result = result.with(inputProperty(facing), true)
+        }
+
         return result
     }
 
     private fun calculateOutput(viewableWorld: ViewableWorld, blockPos: BlockPos, blockState: BlockState): Boolean {
+        // Determine number of input gates, and number of them that have active redstone signals coming in
         var numInputs = 0
         var activeInputs = 0
         for (direction in Direction.values()) {
@@ -198,20 +229,11 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
             }
         }
 
-        // Do we need all inputs to be on or only one?
-        var result = if (blockState.get(REQUIRE_ALL)) {
-            activeInputs > 0 && activeInputs == numInputs
-        }
-        else {
-            activeInputs > 0
-        }
+        // Determine output based on gate type and number of inputs active from total number of inputs
+        val result = blockState.get(GATE).calculate(activeInputs, numInputs)
 
-        // Negate if required
-        if (blockState.get(INVERT_OUTPUT)) {
-            result = !result
-        }
-
-        return result
+        // Negate result if required
+        return if (blockState.get(INVERT_OUTPUT)) !result else result
     }
 
     private fun neighbourMayEmitRedstone(viewableWorld: ViewableWorld, blockPos: BlockPos, direction: Direction): Boolean {
@@ -274,8 +296,7 @@ class RedstonePipeBlock(settings: Settings): Block(settings) {
         val POWERED = Properties.POWERED
         val FACING = Properties.FACING
 
+        val GATE: EnumProperty<RedTechGate> = EnumProperty.of("gate", RedTechGate::class.java)
         val INVERT_OUTPUT: BooleanProperty = BooleanProperty.of("invert_output")
-        val REQUIRE_ALL: BooleanProperty = BooleanProperty.of("require_all")
-
     }
 }
