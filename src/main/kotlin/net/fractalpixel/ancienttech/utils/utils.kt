@@ -1,5 +1,8 @@
+package net.fractalpixel.ancienttech.utils
 
-
+/*
+    Generic utility functions.
+ */
 
 /**
  * @return this modulus d, with always a positive result (if the result would be negative, d is added to it).

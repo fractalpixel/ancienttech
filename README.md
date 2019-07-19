@@ -28,7 +28,7 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
     * [x] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks.
     * [x] Implement rotate, mirror.
     * [x] Rename from redstone_pipe to redstone_gate or similar
-* [ ] Refactor out common functionality of redstone components.     
+* [x] Refactor out common functionality of redstone components.     
 * [x] Rename from RedTech to AncientTech
 * [ ] Redstone Pipe
     * plain, OR:s incoming, if no incoming connections, read block opposite output

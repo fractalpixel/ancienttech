@@ -1,6 +1,8 @@
 package net.fractalpixel.ancienttech
 
-import modPositive
+import net.fractalpixel.ancienttech.utils.modPositive
+import net.fractalpixel.ancienttech.utils.neighbourCurrentlyEmitsRedstone
+import net.fractalpixel.ancienttech.utils.neighbourMayEmitRedstone
 import net.minecraft.block.*
 import net.minecraft.entity.EntityContext
 import net.minecraft.entity.LivingEntity
@@ -33,38 +35,6 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
      */
     val updateDelayTicks = 1
 
-    override fun getOutlineShape(blockState: BlockState, blockView: BlockView, blockPos: BlockPos, entityContext: EntityContext): VoxelShape {
-        return when (blockState.get(FACING)) {
-            Direction.UP -> SHAPE_FACING_UP
-            Direction.DOWN -> SHAPE_FACING_DOWN
-            Direction.NORTH -> SHAPE_FACING_NORTH
-            Direction.SOUTH -> SHAPE_FACING_SOUTH
-            Direction.WEST -> SHAPE_FACING_WEST
-            Direction.EAST -> SHAPE_FACING_EAST
-            else -> SHAPE_FACING_DOWN
-        }
-    }
-
-    override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>) {
-        builder.add(
-                POWERED,
-                FACING,
-                GATE,
-                INVERT_OUTPUT,
-                INPUT_UP,
-                INPUT_DOWN,
-                INPUT_WEST,
-                INPUT_EAST,
-                INPUT_NORTH,
-                INPUT_SOUTH)
-    }
-
-
-    override fun isSimpleFullBlock(blockState: BlockState, blockView: BlockView, blockPos: BlockPos): Boolean {
-        return false
-    }
-
-
     override fun getPlacementState(itemPlacementContext: ItemPlacementContext): BlockState {
         val state = defaultState
                 .with(POWERED, false)
@@ -78,14 +48,9 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
                 .with(INPUT_NORTH, false)
                 .with(INPUT_SOUTH, false)
 
-        return calculateDynamicState(itemPlacementContext.world, itemPlacementContext.blockPos, state)
-    }
+        println("Faces ${itemPlacementContext.side}")
 
-    private fun calculateDynamicState(world: World, blockPos: BlockPos, state: BlockState): BlockState {
-        var updatedState = state
-        updatedState = updateNeighborConnections(world, blockPos, updatedState)
-        updatedState = updatedState.with(POWERED, calculateOutput(world, blockPos, updatedState))
-        return updatedState
+        return calculateDynamicState(itemPlacementContext.world, itemPlacementContext.blockPos, state)
     }
 
     override fun onPlaced(world: World?, blockPos: BlockPos?, blockState: BlockState?, livingEntity_1: LivingEntity?, itemStack_1: ItemStack?) {
@@ -97,6 +62,14 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
             }
         }
     }
+
+    private fun calculateDynamicState(world: World, blockPos: BlockPos, state: BlockState): BlockState {
+        var updatedState = state
+        updatedState = updateNeighborConnections(world, blockPos, updatedState)
+        updatedState = updatedState.with(POWERED, calculateOutput(world, blockPos, updatedState))
+        return updatedState
+    }
+
 
     override fun onBlockAdded(blockState: BlockState, world: World, blockPos: BlockPos, blockState_2: BlockState?, boolean_1: Boolean) {
         // Copied from AbstractRedstoneGate - no idea what this is supposed to do
@@ -119,33 +92,25 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         world.updateNeighborsExcept(neighborPos, this, direction)
     }
 
+
     override fun neighborUpdate(blockState: BlockState, world: World, blockPos: BlockPos, block: Block, blockPos2: BlockPos, boolean_1: Boolean) {
+        // Update input connections from neighbours if necessary
         val state = updateNeighborConnections(world, blockPos, blockState)
         world.setBlockState(blockPos, state)
 
-        // Just check if we should schedule an update, do not update directly, as that way lies infinite loops
-        checkForUpdateNeed(state, world, blockPos)
+        // Check if we should schedule an update to set the powered state, do not update directly, as that way lies infinite loops
+        val wasPowered = state.get(POWERED)
+        val shouldPower = calculateOutput(world, blockPos, state)
+        if (wasPowered != shouldPower) {
+            // Schedule an update tick
+            world.blockTickScheduler.schedule(blockPos, this, updateDelayTicks, TaskPriority.HIGH)
+        }
     }
-
-    override fun hasSidedTransparency(blockState: BlockState): Boolean {
-        return true
-    }
-
-    override fun canPlaceAtSide(blockState: BlockState, blockView_1: BlockView, blockPos_1: BlockPos, blockPlacementEnvironment_1: BlockPlacementEnvironment): Boolean {
-        return false
-    }
-
 
     override fun activate(blockState: BlockState, world: World, blockPos: BlockPos, playerEntity: PlayerEntity, hand: Hand, blockHitResult: BlockHitResult): Boolean {
         return if (!playerEntity.abilities.allowModifyWorld) {
             false
         } else {
-
-            /*
-            // Do not switch state if holding a pipe (makes it easier to place a lot of pipes)
-            val mainHandContent = playerEntity.getEquippedStack(EquipmentSlot.MAINHAND)
-            if (!mainHandContent.isEmpty && mainHandContent.name == AncientTechMod.redstone_gate_ITEM.name) return false
-            */
 
             var state = blockState
 
@@ -176,13 +141,16 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         }
     }
 
-    private fun checkForUpdateNeed(blockState: BlockState, world: World, blockPos: BlockPos) {
-        val wasPowered = blockState.get(POWERED)
-        val shouldPower = calculateOutput(world, blockPos, blockState)
-        if (wasPowered != shouldPower) {
-            // Schedule an update tick
-            scheduleUpdateTick(world, blockPos)
-        }
+    override fun hasSidedTransparency(blockState: BlockState): Boolean {
+        return true
+    }
+
+    override fun canPlaceAtSide(blockState: BlockState, blockView_1: BlockView, blockPos_1: BlockPos, blockPlacementEnvironment_1: BlockPlacementEnvironment): Boolean {
+        return false
+    }
+
+    override fun isSimpleFullBlock(blockState: BlockState, blockView: BlockView, blockPos: BlockPos): Boolean {
+        return false
     }
 
     override fun rotate(blockState: BlockState, blockRotation: BlockRotation): BlockState {
@@ -209,21 +177,8 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         val wasPowered = blockState.get(POWERED)
         val shouldPower = calculateOutput(world, blockPos, blockState)
         if (wasPowered != shouldPower) {
-            //val updateFlag = 2  // Notify clients, but not neighbours?
             world.setBlockState(blockPos, blockState.with(POWERED, shouldPower))
         }
-        /*
-        else if (!wasPowered) {
-            // A short on-tick requested (e.g. from observer block)
-            world.setBlockState(blockPos, blockState.with(POWERED, true))
-            if (!shouldPower) scheduleUpdateTick(world, blockPos)
-        }
-        */
-
-    }
-
-    private fun scheduleUpdateTick(world: World, blockPos: BlockPos) {
-        world.blockTickScheduler.schedule(blockPos, this, updateDelayTicks, TaskPriority.HIGH)
     }
 
 
@@ -244,7 +199,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
      */
     private fun updateNeighborConnections(viewableWorld: ViewableWorld, blockPos: BlockPos, blockState: BlockState): BlockState {
 
-        // Check each direction, if it outputs a redstone signal in this direction, add input pipe from there
+        // Check each direction, if it outputs a redstone signal in this direction (and is not the output direction), add input pipe from there
         val facing = blockState.get(FACING)
         var result = blockState
         var inputsFound = false
@@ -284,33 +239,6 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         return if (blockState.get(INVERT_OUTPUT)) !result else result
     }
 
-    private fun neighbourMayEmitRedstone(viewableWorld: ViewableWorld, blockPos: BlockPos, direction: Direction): Boolean {
-        val neighborPos = blockPos.offset(direction)
-        val blockState = viewableWorld.getBlockState(neighborPos)
-        val block = blockState.block
-
-        return when (block) {
-            is RedstoneGateBlock -> blockState.get(FACING) == direction
-            is AbstractRedstoneGateBlock -> blockState.get(AbstractRedstoneGateBlock.FACING) == direction
-            is ObserverBlock -> blockState.get(ObserverBlock.FACING) == direction
-            else -> blockState.emitsRedstonePower()
-        }
-    }
-
-    private fun neighbourCurrentlyEmitsRedstone(world: World, blockPos: BlockPos, direction: Direction): Boolean {
-        val neighborPos = blockPos.offset(direction)
-        val blockState = world.getBlockState(neighborPos)
-        val block= blockState.block
-        return if (block === Blocks.REDSTONE_BLOCK) {
-            true
-        } else {
-            if (block === Blocks.REDSTONE_WIRE) {
-                blockState.get(RedstoneWireBlock.POWER) > 0
-            } else {
-                world.getEmittedRedstonePower(neighborPos, direction) > 0
-            }
-        }
-    }
 
     private fun inputProperty(direction: Direction): BooleanProperty {
         return when(direction) {
@@ -323,6 +251,32 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         }
     }
 
+    override fun getOutlineShape(blockState: BlockState, blockView: BlockView, blockPos: BlockPos, entityContext: EntityContext): VoxelShape {
+        return when (blockState.get(FACING)) {
+            Direction.UP -> SHAPE_FACING_UP
+            Direction.DOWN -> SHAPE_FACING_DOWN
+            Direction.NORTH -> SHAPE_FACING_NORTH
+            Direction.SOUTH -> SHAPE_FACING_SOUTH
+            Direction.WEST -> SHAPE_FACING_WEST
+            Direction.EAST -> SHAPE_FACING_EAST
+            else -> SHAPE_FACING_DOWN
+        }
+    }
+
+
+    override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>) {
+        builder.add(
+                POWERED,
+                FACING,
+                GATE,
+                INVERT_OUTPUT,
+                INPUT_UP,
+                INPUT_DOWN,
+                INPUT_WEST,
+                INPUT_EAST,
+                INPUT_NORTH,
+                INPUT_SOUTH)
+    }
 
     companion object {
         val SHAPE_FACING_WEST: VoxelShape  = createCuboidShape(6.0, 6.0, 6.0, 16.0, 10.0, 10.0)
