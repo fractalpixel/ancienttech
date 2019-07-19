@@ -1,4 +1,4 @@
-package net.fractalpixel.redtech
+package net.fractalpixel.ancienttech
 
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.block.FabricBlockSettings
@@ -10,7 +10,7 @@ import net.minecraft.sound.BlockSoundGroup
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
-class RedTechMod(): ModInitializer {
+class AncientTechMod(): ModInitializer {
 
     override fun onInitialize() {
         Registry.register(Registry.BLOCK, Identifier(MODID, redstone_gate_ID), redstone_gate)
@@ -18,7 +18,7 @@ class RedTechMod(): ModInitializer {
     }
 
     companion object {
-        val MODID = "redtech"
+        val MODID = "ancienttech"
         val redstone_gate_ID = "redstone_gate"
 
 

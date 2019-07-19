@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.fractalpixel.redtech.mixin",
+  "package": "net.fractalpixel.ancienttech.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],

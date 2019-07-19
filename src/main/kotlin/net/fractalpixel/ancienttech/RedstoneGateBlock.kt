@@ -1,4 +1,4 @@
-package net.fractalpixel.redtech
+package net.fractalpixel.ancienttech
 
 import modPositive
 import net.minecraft.block.*
@@ -69,7 +69,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         val state = defaultState
                 .with(POWERED, false)
                 .with(FACING, itemPlacementContext.side)
-                .with(GATE, RedTechGate.OR)
+                .with(GATE, AncientTechGate.OR)
                 .with(INVERT_OUTPUT, false)
                 .with(INPUT_DOWN, false)
                 .with(INPUT_UP, false)
@@ -144,7 +144,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
             /*
             // Do not switch state if holding a pipe (makes it easier to place a lot of pipes)
             val mainHandContent = playerEntity.getEquippedStack(EquipmentSlot.MAINHAND)
-            if (!mainHandContent.isEmpty && mainHandContent.name == RedTechMod.redstone_gate_ITEM.name) return false
+            if (!mainHandContent.isEmpty && mainHandContent.name == AncientTechMod.redstone_gate_ITEM.name) return false
             */
 
             var state = blockState
@@ -233,7 +233,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
     private fun nextGateState(blockState: BlockState): BlockState {
         // Find index of existing gate, and increase to next, rolling over if past size
         val currentGate = blockState.get(GATE)
-        val gateValues = RedTechGate.values()
+        val gateValues = AncientTechGate.values()
         val nextIndex = (gateValues.indexOf(currentGate) + 1) % gateValues.size
         val nextGate = gateValues[nextIndex]
         return blockState.with(GATE, nextGate)
@@ -341,7 +341,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
 
         val POWERED = Properties.POWERED
 
-        val GATE: EnumProperty<RedTechGate> = EnumProperty.of("gate", RedTechGate::class.java)
+        val GATE: EnumProperty<AncientTechGate> = EnumProperty.of("gate", AncientTechGate::class.java)
         val INVERT_OUTPUT: BooleanProperty = BooleanProperty.of("invert_output")
     }
 }

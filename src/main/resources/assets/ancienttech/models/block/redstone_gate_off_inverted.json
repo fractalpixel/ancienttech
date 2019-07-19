@@ -2,8 +2,8 @@
   "credit": "Made with Blockbench",
   "ambientocclusion": false,
   "textures": {
-    "0": "redtech:block/redstone_gate",
-    "particle": "redtech:block/redstone_gate"
+    "0": "ancienttech:block/redstone_gate",
+    "particle": "ancienttech:block/redstone_gate"
   },
   "elements": [
     {

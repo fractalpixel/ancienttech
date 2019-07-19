@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "redtech:item/redstone_gate"
+    "layer0": "ancienttech:item/redstone_gate"
   }
 }

@@ -1,6 +1,6 @@
-# RedTech Mod
+# AncientTech Mod
 
-RedTech is a mod for Minecraft/Fabric that aims to provide some redstone components to make constructing redstone machinery more space-efficient and easy.
+AncientTech is a mod for Minecraft/Fabric that aims to provide some redstone components to make constructing redstone machinery more space-efficient and easy.
 
 ## Depends on
 
@@ -10,7 +10,7 @@ RedTech is a mod for Minecraft/Fabric that aims to provide some redstone compone
 
 ## Installation
 
-Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't already, copy the redtech jar and the jars of the dependencies to the mod directory of the minecraft install you are running, then (re)start minecraft.  
+Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't already, copy the AncientTech jar and the jars of the dependencies to the mod directory of the minecraft install you are running, then (re)start minecraft.  
 
 ## Usage
 
@@ -29,7 +29,7 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
     * [x] Implement rotate, mirror.
     * [x] Rename from redstone_pipe to redstone_gate or similar
 * [ ] Refactor out common functionality of redstone components.     
-* [ ] Rename from RedTech to AncientTech?
+* [x] Rename from RedTech to AncientTech
 * [ ] Redstone Pipe
     * plain, OR:s incoming, if no incoming connections, read block opposite output
 * [ ] Branch
@@ -39,7 +39,7 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
     * Detect potential outputs - redstone, redstone gates, pipes.  If no output, output in opposite direction?
 * [ ] Recipes
 * [ ] Config file
-* [ ] Add in-game book that sometimes is available as loot / drops from libraries? - explains recipes and usage
+* [ ] Add in-game book that sometimes is available as loot / drops from libraries, or is craftable? - explains recipes and usage
 * [ ] Document
 * [ ] Release
 * Version 2
