@@ -22,7 +22,8 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
     * [ ] Tune texture (shadows)
     * [ ] Do not make redstone rotate?
     * [ ] Space for more gates?
-    * [ ] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks. 
+    * [ ] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks.
+    * [ ] Implement rotate, mirror - update facing, refresh inputs. 
 * [ ] Redstone Pipe
     * plain, OR:s incoming, if no incoming connections, read block opposite output
 * [ ] Branch
@@ -33,6 +34,9 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
     * Could the basic gate include this?
 * [ ] (Always on/off-gate)
     * Ignores inputs.  Dubious value.          
+* [ ] Recipes
+* [ ] Document
+* [ ] Release
 
 ## License
 
@@ -40,7 +44,7 @@ LGPL 3.0
 
 ## Frequently asked Questions
 
-#### Can I include this mod in my custom mod pack?
+#### Can I include this mod in my mod pack?
 Yes.
 
 #### Can I fork this mod?
