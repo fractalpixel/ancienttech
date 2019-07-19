@@ -18,7 +18,21 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 
 ## To be done
 
-* Redstone Pipe  
+* [x] Redstone Gate
+    * [ ] Tune texture (shadows)
+    * [ ] Do not make redstone rotate?
+    * [ ] Space for more gates?
+    * [ ] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks. 
+* [ ] Redstone Pipe
+    * plain, OR:s incoming, if no incoming connections, read block opposite output
+* [ ] Branch
+    * Like pipe, but add one additional output in the direction player watching when placing block (or up if facing straight forward)
+* [ ] Timer?
+* [ ] XOR-like gate
+    * output 1 if off number of active inputs (for toggling things with multiple switches)
+    * Could the basic gate include this?
+* [ ] (Always on/off-gate)
+    * Ignores inputs.  Dubious value.          
 
 ## License
 
