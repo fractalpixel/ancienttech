@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "redtech:redstone_pipe"
+          "name": "redtech:redstone_gate"
         }
       ],
       "conditions": [

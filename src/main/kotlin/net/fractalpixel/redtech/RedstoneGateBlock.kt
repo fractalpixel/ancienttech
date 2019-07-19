@@ -26,11 +26,10 @@ import net.minecraft.world.World
 import java.util.*
 
 
-class RedstonePipeBlock(settings: Settings): FacingBlock(settings) {
+class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
 
     /**
      * Setting this to higher than 1 results in messed pulses if it is driven by something with fast pulses.
-     * It will still try to detect fast off-on-off pulses and create slower pulses from them.
      */
     val updateDelayTicks = 1
 
@@ -145,39 +144,35 @@ class RedstonePipeBlock(settings: Settings): FacingBlock(settings) {
             /*
             // Do not switch state if holding a pipe (makes it easier to place a lot of pipes)
             val mainHandContent = playerEntity.getEquippedStack(EquipmentSlot.MAINHAND)
-            if (!mainHandContent.isEmpty && mainHandContent.name == RedTechMod.REDSTONE_PIPE_ITEM.name) return false
+            if (!mainHandContent.isEmpty && mainHandContent.name == RedTechMod.redstone_gate_ITEM.name) return false
             */
 
             var state = blockState
 
             // Detect if player touched the front or back part
+            val frontBackTurnWheelBorder = -0.5
             val x = blockHitResult.pos.x.modPositive(1.0) * 2 - 1
             val y = blockHitResult.pos.y.modPositive(1.0) * 2 - 1
             val z = blockHitResult.pos.z.modPositive(1.0) * 2 - 1
             val facing = blockState.get(FACING)
             val part = facing.offsetX * x + facing.offsetY * y + facing.offsetZ * z
-            var updated = false
-            if (part < -0.7) {
+            if (part < frontBackTurnWheelBorder) {
                 // We hit the front part, switch output negation
                 state = state.with(INVERT_OUTPUT, !state.get(INVERT_OUTPUT))
                 playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_BREAK, 1.0F, 1.0F);
-                updated = true
-            } else if (part > -0.65) { // Keep a small gap between front and back part - improves the UI?
+            } else {
                 // We hit the back part, switch gate
                 state = nextGateState(state)
                 playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_STEP, 1.0F, 1.0F);
-                updated = true
             }
 
-            if (updated) {
-                // Update output powered state
-                state = state.with(POWERED, calculateOutput(world, blockPos, state))
+            // Update output powered state
+            state = state.with(POWERED, calculateOutput(world, blockPos, state))
 
-                // Update state for block
-                world.setBlockState(blockPos, state)
-            }
+            // Update state for block
+            world.setBlockState(blockPos, state)
 
-            updated
+            true
         }
     }
 
@@ -295,7 +290,7 @@ class RedstonePipeBlock(settings: Settings): FacingBlock(settings) {
         val block = blockState.block
 
         return when (block) {
-            is RedstonePipeBlock -> blockState.get(FACING) == direction
+            is RedstoneGateBlock -> blockState.get(FACING) == direction
             is AbstractRedstoneGateBlock -> blockState.get(AbstractRedstoneGateBlock.FACING) == direction
             is ObserverBlock -> blockState.get(ObserverBlock.FACING) == direction
             else -> blockState.emitsRedstonePower()
