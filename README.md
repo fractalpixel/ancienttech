@@ -27,12 +27,14 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
     * [x] Update texture with new gates, build models    
     * [x] If there are no adjacent inputs, extend input to opposite output by default? -> read blocks.
     * [ ] Implement rotate, mirror - update facing, refresh inputs.
-    * [ ] Read state of block with switch, door, etc 
+    * [ ] Read state of block with switch, door, etc
+    * [ ] Rename from redstone_pipe to redstone_gate or similar 
 * [ ] Redstone Pipe
     * plain, OR:s incoming, if no incoming connections, read block opposite output
 * [ ] Branch
     * Like pipe, but add one additional output in the direction player watching when placing block (or up if facing straight forward)
 * [ ] Timer?
+* [ ] Rename from RedTech to AncientTech?  Or BambooTech?
 * [ ] Recipes
 * [ ] Config file
 * [ ] Add in-game book that sometimes is available as loot / drops from libraries? - explains recipes and usage
