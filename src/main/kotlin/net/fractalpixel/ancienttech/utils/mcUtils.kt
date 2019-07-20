@@ -2,6 +2,7 @@ package net.fractalpixel.ancienttech.utils
 
 import net.fractalpixel.ancienttech.RedstoneGateBlock
 import net.minecraft.block.*
+import net.minecraft.state.property.Property
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.ViewableWorld
@@ -44,3 +45,5 @@ fun neighbourCurrentlyEmitsRedstone(world: World, blockPos: BlockPos, direction:
         }
     }
 }
+
+

@@ -1,14 +1,15 @@
 package net.fractalpixel.ancienttech
 
-import net.fractalpixel.ancienttech.utils.modPositive
-import net.fractalpixel.ancienttech.utils.neighbourCurrentlyEmitsRedstone
-import net.fractalpixel.ancienttech.utils.neighbourMayEmitRedstone
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
+import net.fractalpixel.ancienttech.utils.*
 import net.minecraft.block.*
 import net.minecraft.entity.EntityContext
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
+import net.minecraft.particle.DustParticleEffect
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.BooleanProperty
@@ -27,19 +28,19 @@ import net.minecraft.world.ViewableWorld
 import net.minecraft.world.World
 import java.util.*
 
-
+/**
+ * A redstone logic block that has one output and inputs from any adjacent blocks that may usually produce redstone
+ * signals.  It has a configurable logic gate that can switch between OR, TWO, AND, and XOR, see [RedstoneGate],
+ * by touching the gate block near its center.  Its output can also be inverted, this is toggled by touching the
+ * block near its output end.  The block indicates whether it is outputting a redstone signal by having a glowing output end.
+ */
 class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
-
-    /**
-     * Setting this to higher than 1 results in messed pulses if it is driven by something with fast pulses.
-     */
-    val updateDelayTicks = 1
 
     override fun getPlacementState(itemPlacementContext: ItemPlacementContext): BlockState {
         val state = defaultState
                 .with(POWERED, false)
                 .with(FACING, itemPlacementContext.side)
-                .with(GATE, AncientTechGate.OR)
+                .with(GATE, RedstoneGate.OR)
                 .with(INVERT_OUTPUT, false)
                 .with(INPUT_DOWN, false)
                 .with(INPUT_UP, false)
@@ -56,7 +57,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
     override fun onPlaced(world: World?, blockPos: BlockPos?, blockState: BlockState?, livingEntity_1: LivingEntity?, itemStack_1: ItemStack?) {
         if (world != null && blockPos != null && blockState != null) {
             val updatedState = calculateDynamicState(world, blockPos, blockState)
-            if (updatedState.get(POWERED) != blockState.get(POWERED)) {
+            if (updatedState[POWERED] != blockState[POWERED]) {
                 // Schedule update tick if necessary
                 world.blockTickScheduler.schedule(blockPos, this, 1)
             }
@@ -86,7 +87,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
 
     private fun updateTarget(world: World, blockPos: BlockPos, blockState: BlockState) {
         // Copied from AbstractRedstoneGate - no idea what this is supposed to do
-        val direction = blockState.get(FACING)
+        val direction = blockState[FACING]
         val neighborPos = blockPos.offset(direction.opposite)
         world.updateNeighbor(neighborPos, this, blockPos)
         world.updateNeighborsExcept(neighborPos, this, direction)
@@ -99,7 +100,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         world.setBlockState(blockPos, state)
 
         // Check if we should schedule an update to set the powered state, do not update directly, as that way lies infinite loops
-        val wasPowered = state.get(POWERED)
+        val wasPowered = state[POWERED]
         val shouldPower = calculateOutput(world, blockPos, state)
         if (wasPowered != shouldPower) {
             // Schedule an update tick
@@ -119,15 +120,15 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
             val x = blockHitResult.pos.x.modPositive(1.0) * 2 - 1
             val y = blockHitResult.pos.y.modPositive(1.0) * 2 - 1
             val z = blockHitResult.pos.z.modPositive(1.0) * 2 - 1
-            val facing = blockState.get(FACING)
+            val facing = blockState[FACING]
             val part = facing.offsetX * x + facing.offsetY * y + facing.offsetZ * z
             if (part < frontBackTurnWheelBorder) {
                 // We hit the front part, switch output negation
-                state = state.with(INVERT_OUTPUT, !state.get(INVERT_OUTPUT))
+                state = state.with(INVERT_OUTPUT, !state[INVERT_OUTPUT])
                 playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_BREAK, 1.0F, 1.0F);
             } else {
                 // We hit the back part, switch gate
-                state = nextGateState(state)
+                state = state.with(GATE, state[GATE].nextGate())
                 playerEntity.playSound(SoundEvents.BLOCK_BAMBOO_STEP, 1.0F, 1.0F);
             }
 
@@ -154,11 +155,11 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
     }
 
     override fun rotate(blockState: BlockState, blockRotation: BlockRotation): BlockState {
-        return blockState.with(FACING, blockRotation.rotate(blockState.get(FACING)))
+        return blockState.with(FACING, blockRotation.rotate(blockState[FACING]))
     }
 
     override fun mirror(blockState: BlockState, blockMirror: BlockMirror): BlockState {
-        return blockState.with(FACING, blockMirror.apply(blockState.get(FACING)))
+        return blockState.with(FACING, blockMirror.apply(blockState[FACING]))
     }
 
     override fun getStrongRedstonePower(blockState: BlockState, blockView: BlockView, blockPos: BlockPos, direction: Direction): Int {
@@ -166,7 +167,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
     }
 
     override fun getWeakRedstonePower(blockState: BlockState, blockView: BlockView, blockPos: BlockPos, direction: Direction): Int {
-        return if (blockState.get(POWERED) && direction == blockState.get(FACING)) 15 else 0
+        return if (blockState[POWERED] && direction == blockState[FACING]) 15 else 0
     }
 
     override fun emitsRedstonePower(blockState: BlockState): Boolean {
@@ -174,7 +175,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
     }
 
     override fun onScheduledTick(blockState: BlockState, world: World, blockPos: BlockPos, random: Random) {
-        val wasPowered = blockState.get(POWERED)
+        val wasPowered = blockState[POWERED]
         val shouldPower = calculateOutput(world, blockPos, blockState)
         if (wasPowered != shouldPower) {
             world.setBlockState(blockPos, blockState.with(POWERED, shouldPower))
@@ -183,29 +184,17 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
 
 
     /**
-     * Toggle to next logic gate in sequence
-     */
-    private fun nextGateState(blockState: BlockState): BlockState {
-        // Find index of existing gate, and increase to next, rolling over if past size
-        val currentGate = blockState.get(GATE)
-        val gateValues = AncientTechGate.values()
-        val nextIndex = (gateValues.indexOf(currentGate) + 1) % gateValues.size
-        val nextGate = gateValues[nextIndex]
-        return blockState.with(GATE, nextGate)
-    }
-
-    /**
      * Determine the directions that there should be input pipes from
      */
     private fun updateNeighborConnections(viewableWorld: ViewableWorld, blockPos: BlockPos, blockState: BlockState): BlockState {
 
         // Check each direction, if it outputs a redstone signal in this direction (and is not the output direction), add input pipe from there
-        val facing = blockState.get(FACING)
+        val facing = blockState[FACING]
         var result = blockState
         var inputsFound = false
         for (direction in Direction.values()) {
             val inputProperty = inputProperty(direction)
-            val hasInput = blockState.get(inputProperty)
+            val hasInput = blockState[inputProperty]
             val shouldInput = neighbourMayEmitRedstone(viewableWorld, blockPos, direction) && direction != facing.opposite
             if (hasInput != shouldInput) {
                 result = result.with(inputProperty, shouldInput)
@@ -226,17 +215,17 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
         var numInputs = 0
         var activeInputs = 0
         for (direction in Direction.values()) {
-            if (blockState.get(inputProperty(direction))) {
+            if (blockState[inputProperty(direction)]) {
                 numInputs++
                 if (neighbourCurrentlyEmitsRedstone(world, blockPos, direction)) activeInputs++
             }
         }
 
         // Determine output based on gate type and number of inputs active from total number of inputs
-        val result = blockState.get(GATE).calculate(activeInputs, numInputs)
+        val result = blockState[GATE].calculate(activeInputs, numInputs)
 
         // Negate result if required
-        return if (blockState.get(INVERT_OUTPUT)) !result else result
+        return if (blockState[INVERT_OUTPUT]) !result else result
     }
 
 
@@ -252,7 +241,7 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
     }
 
     override fun getOutlineShape(blockState: BlockState, blockView: BlockView, blockPos: BlockPos, entityContext: EntityContext): VoxelShape {
-        return when (blockState.get(FACING)) {
+        return when (blockState[FACING]) {
             Direction.UP -> SHAPE_FACING_UP
             Direction.DOWN -> SHAPE_FACING_DOWN
             Direction.NORTH -> SHAPE_FACING_NORTH
@@ -295,7 +284,46 @@ class RedstoneGateBlock(settings: Settings): FacingBlock(settings) {
 
         val POWERED = Properties.POWERED
 
-        val GATE: EnumProperty<AncientTechGate> = EnumProperty.of("gate", AncientTechGate::class.java)
+        val GATE: EnumProperty<RedstoneGate> = EnumProperty.of("gate", RedstoneGate::class.java)
         val INVERT_OUTPUT: BooleanProperty = BooleanProperty.of("invert_output")
+
+        /**
+         * Delay before updating outputs when an input has changed.
+         * Setting this to higher than 1 results in missed pulses if it is driven by something with fast pulses.
+         */
+        val updateDelayTicks = 1
+
+        /**
+         * Amount of generated particles when output is on.  0 = none, 1 = max possible.
+         */
+        val particleAmount = 0.2
     }
+
+
+    /**
+     * Show redstone sparklies on the client side.
+     */
+    @Environment(EnvType.CLIENT)
+    override fun randomDisplayTick(blockState: BlockState, world: World, blockPos: BlockPos, random: Random) {
+        // Spawn some particles occasionally when output powered
+        if (blockState[POWERED] && random.nextBoolean(particleAmount)) {
+
+            // Position sparkling over output end
+            val facing = blockState[FACING].opposite
+            val outputOffset = 7.5/8.0
+            var x = blockPos.x + 0.5 + outputOffset * facing.offsetX * 0.5
+            var y = blockPos.y + 0.5
+            var z = blockPos.z + 0.5 + outputOffset * facing.offsetZ * 0.5
+
+            // Randomize particle position
+            val spread = 0.15
+            x += random.nextDouble(-spread, spread)
+            y += random.nextDouble(-spread, spread)
+            z += random.nextDouble(-spread, spread)
+
+            // Spawn particle
+            world.addParticle(DustParticleEffect.RED, x, y, z, 0.0, 0.0, 0.0)
+        }
+    }
+
 }

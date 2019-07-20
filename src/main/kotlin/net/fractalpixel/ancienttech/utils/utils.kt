@@ -1,18 +1,28 @@
 package net.fractalpixel.ancienttech.utils
 
+import java.util.*
+
 /*
     Generic utility functions.
  */
 
 /**
- * @return this modulus d, with always a positive result (if the result would be negative, d is added to it).
+ * Create random value in the range 0 .. specified value. (works for negative values too).
  */
-fun Double.modPositive(d: Double): Double {
-    val result = this % d
-    return if (result >= 0) {
-        result
-    } else {
-        result + d
-    }
+fun Random.nextDouble(max: Double): Double {
+    return this.nextDouble() * max
 }
 
+/**
+ * Create random value in a range.
+ */
+fun Random.nextDouble(min: Double, max: Double): Double {
+    return this.nextDouble().mixTo(min, max)
+}
+
+/**
+ * Random boolean with the specified probability (1 = always true, 0 = always false, 0.5 = 50%)
+ */
+fun Random.nextBoolean(probability: Double): Boolean {
+    return this.nextDouble() < probability
+}
