@@ -31,20 +31,29 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 * [x] Refactor out common functionality of redstone components.     
 * [x] Rename from RedTech to AncientTech
 * [ ] Redstone Pipe
-    * plain, OR:s incoming, if no incoming connections, read block opposite output
-* [ ] Branch
-    * Like pipe, but add one additional output in the direction player watching when placing block (or up if facing straight forward)
-* [ ] Redstone sensor
-    * Detects if the block in front emits redstone signal into sensor, if so, output redstone to any outputs
-    * Detect potential outputs - redstone, redstone gates, pipes.  If no output, output in opposite direction?
+    * Power is max of inputted powers, no distance limits.
+    * [ ] For working updates, perhaps output needs to be updated one tick after input change detected?
+    * [ ] Make pipes branch by applying pipe item to neighboring block side
+* [ ] Fix updates, pipe connections, nets, and all other issues
 * [ ] Recipes
 * [ ] Config file
 * [ ] Add in-game book that sometimes is available as loot / drops from libraries, or is craftable? - explains recipes and usage
 * [ ] Document
 * [ ] Release
 * Version 2
-    * [ ] Multi-channel pipes? - 8 bits?          
+    * [ ] Color pipes for visual clarity?  (And also stops autoconnects?)
     * [ ] Timer?
+    * [ ] Delay?
+    * [ ] 8 bit shift register, bus connection (separate in & out, or freeze content with latch/lock?), redstone in & out, redstone for stepping one step, redstone for direction?
+        * Not enough sides.. Perhaps skip direction selection?
+            * Bus (North)
+            * Latch (Top) (non-locked by default)
+            * Step (South)
+            * In (West)
+            * Out (East)
+        * [ ] Visualization of state, ~~perhaps manually toggle bits?~~
+          
+    * [ ] Multi-channel pipes? - 8 bits?          
     * [ ] Display blocks
         * [ ] Alphanumerical
         * [ ] Graphical
