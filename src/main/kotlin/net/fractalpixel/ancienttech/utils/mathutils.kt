@@ -8,7 +8,7 @@ import java.text.DecimalFormat
 
 /*
 
-    Adapted from MistUtils, see https://gitlab.com/vertexmist/mistutils
+    Borrowed and adapted from MistUtils, see https://gitlab.com/vertexmist/mistutils
 
 */
 

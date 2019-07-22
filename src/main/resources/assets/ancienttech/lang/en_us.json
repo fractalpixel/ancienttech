@@ -1,5 +1,7 @@
 {
   "block.ancienttech.redstone_gate": "Redstone Gate",
-  "item.ancienttech.redstone_gate": "Redstone Gate"
+  "item.ancienttech.redstone_gate": "Redstone Gate",
+  "block.ancienttech.redstone_pipe": "Redstone Pipe",
+  "item.ancienttech.redstone_pipe": "Redstone Pipe"
 }
 

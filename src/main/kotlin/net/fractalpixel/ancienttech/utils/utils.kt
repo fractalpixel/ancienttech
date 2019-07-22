@@ -6,6 +6,9 @@ import java.util.*
     Generic utility functions.
  */
 
+
+// Extension functions for Random:
+
 /**
  * Create random value in the range 0 .. specified value. (works for negative values too).
  */

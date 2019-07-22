@@ -26,6 +26,12 @@ repositories {
 
 	mavenCentral()
 	jcenter()
+
+	// Cardinal components
+	maven {
+		name = "NerdHubMC"
+		url = "https://maven.abusedmaster.xyz"
+	}
 }
 
 
@@ -42,9 +48,15 @@ dependencies {
 	// You may need to force-disable transitiveness on them.
 	
 	// Kotlin support
-	modCompile(group: "net.fabricmc", name: "fabric-language-kotlin", version: "1.3.30-SNAPSHOT")
-	compileOnly(group: "net.fabricmc", name: "fabric-language-kotlin", version: "1.3.30-SNAPSHOT")
+	modCompile(group: "net.fabricmc", name: "fabric-language-kotlin", version: project.fabric_language_kotlin_version)
+	compileOnly(group: "net.fabricmc", name: "fabric-language-kotlin", version: project.fabric_language_kotlin_version)
 
+
+	// Cardinal components, for storing data associated with various things in the game.
+	// Replace modImplementation with modApi if you expose components in your own API
+	modApi "com.github.NerdHubMC:Cardinal-Components-API:${project.cardinal_components_version}"
+	// Includes Cardinal Components API as a Jar-in-Jar dependency (optional)
+	include "com.github.NerdHubMC:Cardinal-Components-API:${project.cardinal_components_version}"
 }
 
 processResources {

@@ -45,6 +45,10 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 * Version 2
     * [ ] Multi-channel pipes? - 8 bits?          
     * [ ] Timer?
+    * [ ] Display blocks
+        * [ ] Alphanumerical
+        * [ ] Graphical
+        
 
 
 ## License

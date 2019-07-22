@@ -1,0 +1,40 @@
+{
+  "credit": "Made with Blockbench",
+  "textures": {
+    "0": "ancienttech:block/redstone_pipe",
+    "particle": "ancienttech:block/redstone_pipe"
+  },
+  "elements": [
+    {
+      "name": "segment",
+      "from": [1, 7, 7],
+      "to": [7, 9, 9],
+      "faces": {
+        "north": {"uv": [4, 4, 16, 8], "rotation": 180, "texture": "#0"},
+        "south": {"uv": [4, 8, 16, 12], "texture": "#0"},
+        "up": {"uv": [4, 8, 16, 12], "texture": "#0"},
+        "down": {"uv": [4, 12, 16, 16], "texture": "#0"}
+      }
+    },
+    {
+      "name": "redstone_on",
+      "from": [0, 7, 7],
+      "to": [1, 9, 9],
+      "shade": false,
+      "faces": {
+        "north": {"uv": [0, 8, 2, 12], "rotation": 180, "texture": "#0"},
+        "south": {"uv": [0, 12, 2, 16], "texture": "#0"},
+        "west": {"uv": [0, 0, 4, 4], "rotation": 180, "texture": "#0"},
+        "up": {"uv": [0, 8, 2, 12], "texture": "#0"},
+        "down": {"uv": [0, 4, 2, 8], "texture": "#0"}
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "west",
+      "origin": [8, 8, 8],
+      "children": [0, 1]
+    }
+  ]
+}

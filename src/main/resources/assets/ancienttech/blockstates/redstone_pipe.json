@@ -1,0 +1,48 @@
+{
+  "multipart": [
+    {   "apply": { "model": "ancienttech:block/redstone_pipe_center" }},
+
+    {   "when": { "connect_north": "true", "power": "0"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_n_off"}
+    },
+    {   "when": { "connect_north": "true", "power": "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_n_on"}
+    },
+
+    {   "when": { "connect_south": "true", "power": "0"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_s_off"}
+    },
+    {   "when": { "connect_south": "true", "power": "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_s_on"}
+    },
+
+    {   "when": { "connect_west": "true", "power": "0"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_w_off"}
+    },
+    {   "when": { "connect_west": "true", "power": "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_w_on"}
+    },
+
+    {   "when": { "connect_east": "true", "power": "0"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_e_off"}
+    },
+    {   "when": { "connect_east": "true", "power": "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_e_on"}
+    },
+
+    {   "when": { "connect_up": "true", "power": "0"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_u_off"}
+    },
+    {   "when": { "connect_up": "true", "power": "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_u_on"}
+    },
+
+    {   "when": { "connect_down": "true", "power": "0"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_d_off"}
+    },
+    {   "when": { "connect_down": "true", "power": "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15"},
+      "apply": { "model": "ancienttech:block/redstone_pipe_d_on"}
+    }
+
+  ]
+}
