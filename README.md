@@ -51,7 +51,18 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
             * Step (South)
             * In (West)
             * Out (East)
-        * [ ] Visualization of state, ~~perhaps manually toggle bits?~~
+            * Toggle input/output from/to bus (Bottom)
+        * [ ] Manual control to toggle input/output mode too     
+        * [ ] Visualization of state
+        * [ ] When in output mode, provide manual controls for toggling the bits too
+        * [ ] Maybe manual controls for latch and step too? (if they are unconnected) for full manual bit manipulation editor
+        * [ ] Could provide manual toggling of direction too?
+        * State size: 8(data) + 2(facing) + 1(step) + 1(latch) + 1(shift dir) + 1(in-out mode) = 14bits = 16k states 
+            * No need to keep state for input, read it when step changes (rising edge logic?)
+            * State of out is same as last bit in that direction
+            * (Latch can be read when bus or data changes to check if we should update one or the other - in this case we can't visualize the state of it though)
+            * Quite a lot of models, but maybe acceptable? 
+            
           
     * [ ] Multi-channel pipes? - 8 bits?          
     * [ ] Display blocks
