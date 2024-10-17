@@ -2,6 +2,10 @@
 
 AncientTech is a mod for Minecraft/Fabric that aims to provide some redstone components to make constructing redstone machinery more space-efficient and easy.
 
+## Status
+
+No longer developed (and hasn't been for quite a few years).  Feel free to reuse parts if they are of any value.  I will probably delete this repo in a few years.
+
 ## Depends on
 
 * [Fabric Mod Loader for Minecraft](https://www.fabricmc.net/)
@@ -73,7 +77,7 @@ Install the [Fabric mod loader](https://www.fabricmc.net/) if you haven't alread
 
 ## License
 
-LGPL 3.0
+MIT
 
 ## Frequently asked Questions
 
